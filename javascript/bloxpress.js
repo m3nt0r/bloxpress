@@ -93,6 +93,7 @@ Bloxpress.DragDrop = $.extend({
 	},
 	addEvents: function()
 	{
+		$('.button-addwidgets').bind('click', function(){ Bloxpress.Menu.init(); });
 		$('.container-close').css({cursor:'pointer'}).click(function(evt){ this.removeBlock($(evt.target).parent().parent()); }.bind(this));
 		$('.block_handle').css({cursor: cursorNormal}).bind("mousedown", function(){
 			$(this).css({cursor: cursorGrab});
@@ -330,10 +331,6 @@ Function.prototype.bind = function( object ) {
 };
 
 // Document Ready
-$(function(){
-	$('.blocklist_link').click(function(){
-		Bloxpress.Menu.init(); return false;	
-	});
-	
+$(function(){	
 	Bloxpress.DragDrop.init();
 });

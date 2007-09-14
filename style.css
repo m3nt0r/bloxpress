@@ -9,12 +9,9 @@ Version: 1.6
 */
 
 body {
-	color: #444444;
-	background: #303030 url(images/bg_wrapper.gif);	
-	font-family:"lucida grande", "helvetica", "tahoma", "arial", sans-serif;
-	font-size: 12px;
-	padding: 0;	
-	margin: 0;	
+	color: #444;
+	background: #fff;
+	font-size: 77%;
 }
 
 /* -----------------------
@@ -24,11 +21,11 @@ h1, h2, h3, h4, h5 {
    /* reset spacing */
    margin: 0; padding: 0;
 }
-h1 { font-size: 24px; }
-h2 { font-size: 18px; }
-h3 { font-size: 14px; }
-h4 { font-size: 12px; }
-h5 { font-size: 12px; }
+h1 { font-size: 182%; }
+h2 { font-size: 136%; }
+h3 { font-size: 107%; }
+h4 { font-size: 92%; }
+h5 { font-size: 92%; }
 
 /* -----------------------
   links
@@ -117,6 +114,13 @@ of the whole page*/
 #footer {
 	background: #000;
 	color: #fff;
+}
+
+/* -----------------------
+  mainmenu
+*/
+.yui-skin-sam .yui-button {
+	margin-left: 0;	
 }
 
 /* -----------------------

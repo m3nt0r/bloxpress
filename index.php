@@ -1,5 +1,4 @@
 <?php get_header(); ?>
-	<p><a href="#blocklist" class="blocklist_link">Get Blocklist</a></p>
 
 	<div id="layout">
 		<div id="drop_1" class="dropspot">

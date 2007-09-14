@@ -6,9 +6,12 @@
 		
 		<title><?php if(is_single()||is_page()): ?><?php wp_title(); ?> | <?php endif; ?><?php bloginfo('name'); ?></title>
 		
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.0/build/fonts/fonts-min.css">
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.0/build/container/assets/skins/sam/container.css">
+		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.0/build/button/assets/skins/sam/button.css">
+			
 		<link rel="stylesheet" href="<?php bloginfo('stylesheet_url'); ?>" type="text/css" media="screen" />
 		<link rel="stylesheet" href="<?php bloginfo('template_directory'); ?>/addon.css" type="text/css" media="screen" />
-		<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.3.0/build/container/assets/skins/sam/container.css">
 		
 		<link rel="alternate" type="application/rss+xml" title="<?php bloginfo('name'); ?> RSS Feed" href="<?php bloginfo('rss2_url'); ?>" />
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
@@ -28,5 +31,10 @@
 				<span class="description"><?php bloginfo('description'); ?></span>
 			</div>
 			<div id="main" class="content">
+				
+					<div id="menuline">
+						<span id="pushbutton1" class="yui-button yui-push-button"><span class="first-child"><button type="button" class="button-addwidgets">Add new Widgets</button></span></span>
+					</div>
+				
 				<!-- Here ends the header.php -->
 
