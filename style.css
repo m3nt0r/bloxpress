@@ -1,0 +1,242 @@
+/*
+Theme Name: BloxPress
+Theme URI: http://www.bloxpress.org
+Description: A rich-interface theme for Wordpress.
+Author: Kjell Bublitz
+Author URI: http://www.m3nt0r.de
+Created: 27.02.2007
+Version: 1.6
+*/
+
+body {
+	color: #444444;
+	background: #303030 url(images/bg_wrapper.gif);	
+	font-family:"lucida grande", "helvetica", "tahoma", "arial", sans-serif;
+	font-size: 12px;
+	padding: 0;	
+	margin: 0;	
+}
+
+/* -----------------------
+  headings
+*/
+h1, h2, h3, h4, h5 {
+   /* reset spacing */
+   margin: 0; padding: 0;
+}
+h1 { font-size: 24px; }
+h2 { font-size: 18px; }
+h3 { font-size: 14px; }
+h4 { font-size: 12px; }
+h5 { font-size: 12px; }
+
+/* -----------------------
+  links
+*/
+a {
+	text-decoration: none;
+	color: #aa1100;
+}
+
+a:hover {
+	color: #ff1100;	
+}
+
+a img {
+	border: none;
+}
+
+/* -----------------------
+  lists
+*/
+ul, ol {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+
+/* -----------------------
+  layout
+*/
+
+/* this wraps all content
+and defines width and alignment
+of the whole page*/
+#wrap { 
+	width: 780px;
+	margin: 0 auto; /* center */
+	text-align: center;
+}
+
+#layout {
+	clear: both;	
+}
+
+/* the content class is added
+  to all layout elements. consider
+  it as global style added to the
+  next ones. */
+.content {
+	padding: 1em;	
+	clear: both;
+}
+
+/* this is the height and
+  padding of the pageheader. */
+#header {
+	height: 60px;
+	text-align: center;
+}
+
+/* the main area carries
+  all content templates like
+  page, date, author, single,.. */
+#main {
+	text-align: left;
+	line-height: 1.2em;
+}
+
+/* footer.. says it all */
+#footer {
+	text-align: right;
+	font-size: 10px;
+}
+
+/* -----------------------
+  layout colors
+*/
+#header {
+	background: #525252;
+	color: #fff;
+}
+#main {
+	background: #fff;
+	color: inherit;
+}
+#footer {
+	background: #000;
+	color: #fff;
+}
+
+/* -----------------------
+  blockmenu
+*/
+#blockmenu {
+	width: 170px !important;	
+}
+#blockmenu ul { /* some styles affecting lists (.sortable is also a list) */
+	list-style: none
+}
+#blockmenu ul li {  /* basic padding to simulate spacing between the dropspots */
+	padding: 0.2em 0;
+}
+.blockitem { /* the cursor is changed by javascript, but anyways .. */
+	cursor: pointer;
+}
+
+.blockitem_frame { /* this is the style simulating the element if a blockitem is dragged. its a replacement. */ 
+	border: 2px dashed #aaa;
+	background: #efa;
+}
+
+
+/* -----------------------
+  Dropzones
+*/
+.dropspot { /*this is the DIV wrapping .sortable. It is the connection between blockmenu and the columns */
+	padding: 0;
+	padding-bottom: 50px;
+	margin-bottom: 20px;
+	float: left;
+	list-style: none
+}
+.dropspot ul { /* some styles affecting lists (.sortable is also a list) */
+	list-style: none
+}
+.dropspot ul li {  /* basic padding to simulate spacing between the dropspots */
+	padding: 0.2em 0;
+}
+.dropzonehover {  /* this class is added to the dropspot if a blockitem is hovering */
+	border: 1px dashed #a10;
+}
+
+/*
+ drop 1 = left;
+ drop 2 = center;
+ drop 3 = right;
+*/
+#drop_1, #drop_3 { /* here i balance the colum layout */
+	width: 180px;
+}
+
+#drop_2 { /* the center column should be the widest of course*/
+	width: 380px;
+	margin-left: 8px;
+}
+#drop_3 { /* i float right, so it looks equal on the edges */
+	float: right;
+}
+
+/* -----------------------
+  Blocksorting
+*/
+.sortable { /* this is the main sidebar UL element (top UL) */
+	padding-bottom: 50px;
+	padding: 0;
+}
+
+.sortableactive { /* this class is ON-DRAG given to all available sidebars */
+	background: #eee;
+}
+.sortablehover { /* this is a class that is added to the column if a block is dragged over*/
+	border: 1px dashed #a10;
+}
+
+.sorthelper { /* this is shown at the current sidebar spot where the block is dragged over */
+	
+}
+
+
+/* -----------------------
+  Blocks
+*/
+.block { /*this is the main div carrying all elements of a block. */
+	line-height: 1.2em;
+}
+.block ul {
+	list-style: none;
+}
+.block li {
+	padding: 0.2em 0pt;
+}
+.block table {
+	width: 99%	
+}
+.block_handle { /*this is the draggin hotspot */
+	cursor: move;
+}
+.container-close {
+	cursor: pointer;	
+}
+
+.block_content { /* what is loaded gets into this one */
+}
+
+/* if you want to change styling of the block content
+you should extend .block_content to get the goods ...
+
+example: .wp_widget_categories .block_content { background: #efa }
+*/
+
+/* -----------------------
+  Update Messages
+*/
+
+.cookienotice {
+	background: #a10;
+	color: #fff;
+	padding: 2px;
+	position: fixed;
+}
+

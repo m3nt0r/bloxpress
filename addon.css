@@ -1,0 +1,19 @@
+body {
+	background: #fff;
+}
+
+#header {
+	background: #fff;
+	color: #000;
+	border-bottom: thin solid #808080;
+	text-align: left
+}
+#main {
+	background: #fff;
+	color: #555;
+}
+#footer {
+	background: #fff;
+	color: #000;
+	border-top: thin solid #808080;
+}
