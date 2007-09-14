@@ -227,9 +227,9 @@ Bloxpress.Menu = $.extend({
 		});	
 
 		// Wrap a DIV around the list and add a heading to it.		
-		var blockmenu = $.DIV({id:'blockmenu', className:'yui-panel yui-dialog shadow block'},
+		var blockmenu = $.DIV({id:'blockmenu', className:'yui-panel yui-dialog shadow'},
 					    $.DIV({id:'blockmenu_handle', className:'hd'}, blockmenuCaption),
-					    $.DIV({className:'bd'}, blocklist)
+					    $.DIV({className:'bd'}, blocklist), $.DIV({className:'container-close'})
 					);	
 		$(blockmenu).css({display:'none', position:'absolute', top:'0', left:'0', zIndex:'900'});
 		
@@ -238,8 +238,8 @@ Bloxpress.Menu = $.extend({
 		
 		// Start of with a animation and make the whole Div draggable
 		$('#blockmenu').BlindDown(400).Draggable({zIndex: 900, handle: '#blockmenu_handle'});
+		$('#blockmenu div.container-close').bind("click", function() { $('#blockmenu').remove(); });
 		
-		/*
 		// Make all Listitems draggable and add the event handles for the mouse cursor
 		$('.blockitem').css({cursor: cursorNormal}).bind("mousedown", function(){
 			$(this).css({cursor: cursorGrab});
@@ -252,7 +252,7 @@ Bloxpress.Menu = $.extend({
 				$(this).fadeTo("fast", 1);
 				$(this).css({cursor: cursorNormal});
 			}, frameClass: 'blockitem_frame'
-		});*/
+		});
 	}	
 }, Bloxpress);
 
