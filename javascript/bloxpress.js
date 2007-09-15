@@ -169,7 +169,7 @@ Bloxpress.DragDrop = $.extend({
 				handle: '.block_handle',
 				containment: '#layout',
 				onStart: function(block) {
-					//_self.minimize(block.firstChild.lastChild, block.lastChild);
+					$(block).css({padding:'0 2px 4px 2px'});
 				},
 				onStop: function(){
 					_self.updateCookie();

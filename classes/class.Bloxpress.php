@@ -89,7 +89,6 @@ class Bloxpress {
 	function loadWidgets() {
 		global $wp_registered_widgets;
 		wp_widgets_init();
-		unregister_sidebar_widget('search');
 		include(BP_BASEDIR.DS.'widgets'.DS.'custom.php');
 		$this->widgets = $wp_registered_widgets;
 	}
