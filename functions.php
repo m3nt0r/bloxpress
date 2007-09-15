@@ -46,10 +46,12 @@ $sidebars = $bloxpress->getSidebars();
 function renderSidebar($num){
 	global $sidebars, $bloxpress;
 
+	$array_num = $num - 1;
+	$sidebar_id = 'sidebar-'.$num;
+	
 	if(is_array($sidebars)) {
-		$sidebarId = $bloxpress->columns[$num-1];
-		if(is_object($sidebars[$sidebarId])) {
-			$sidebarHtml = $sidebars[$sidebarId]->getSidebarHTML();
+		if(is_object($sidebars[$sidebar_id])) {
+			$sidebarHtml = $sidebars[$sidebar_id]->getSidebarHTML();
 		}
 	}
 	
@@ -57,11 +59,12 @@ function renderSidebar($num){
 	if(isset($sidebarHtml) && !empty($sidebarHtml)) {
 		echo $sidebarHtml;
 		return true;
-	} elseif(dynamic_sidebar($num)){
-		return true;	
 	} else {
-		return false;
-	}
+		if(in_array($sidebar_id, $bloxpress->columns)) {
+			return dynamic_sidebar($num);
+		}
+	} 
+	return false;
 }
 
 

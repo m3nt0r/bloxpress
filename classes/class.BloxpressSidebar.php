@@ -28,7 +28,7 @@ class BloxpressSidebar {
 	
 	function loadSidebar()
 	{
-		foreach($this->layout as $widget_name)
+		foreach((array) $this->layout as $widget_name)
 		{
 			$this->widgets[$widget_name] = new BloxpressWidget($widget_name, $this->setup);
 			$this->html.= $this->widgets[$widget_name]->getWidgetHTML();

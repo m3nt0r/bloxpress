@@ -119,6 +119,9 @@ of the whole page*/
 /* -----------------------
   mainmenu
 */
+#menuline {
+	float: right;	
+}
 .yui-skin-sam .yui-button {
 	margin-left: 0;	
 }

@@ -29,12 +29,15 @@
 			<div id="header" class="content">
 				<h1><a href="<?php echo get_option('home'); ?>/"><?php bloginfo('name'); ?></a></h1>
 				<span class="description"><?php bloginfo('description'); ?></span>
+			
+				<div id="menuline">
+					<span class="yui-button yui-push-button"><span class="first-child"><button type="button" class="button-addwidgets">Add new Widgets</button></span></span>
+				</div>
+				<br clear="all" />
 			</div>
 			<div id="main" class="content">
 				
-					<div id="menuline">
-						<span id="pushbutton1" class="yui-button yui-push-button"><span class="first-child"><button type="button" class="button-addwidgets">Add new Widgets</button></span></span>
-					</div>
+
 				
 				<!-- Here ends the header.php -->
 

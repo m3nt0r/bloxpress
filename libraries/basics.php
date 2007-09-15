@@ -138,7 +138,11 @@
  */
 	function pr($var) {
 			echo "<pre>";
+			ob_start();
 			print_r($var);
+			$content = ob_get_contents();
+			ob_clean();
+			echo htmlentities($content);
 			echo "</pre>";
 	}
 

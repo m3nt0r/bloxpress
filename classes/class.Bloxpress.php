@@ -70,10 +70,13 @@ class Bloxpress {
 					
 					foreach($this->widgets as $widget_name => $widget) // find the name by id
 					{
-						$this->layout[$column][$i] = $block_name; // overwrite the value of the cookie array
+						$cookieLayout[$column][$i] = $block_name; // overwrite the value of the cookie array
 					}			
 				}
 			}
+			$this->layout = $cookieLayout;
+			$this->columns = array_keys($cookieLayout);
+			
 		} else {
 			$this->cookie = false;	
 		}

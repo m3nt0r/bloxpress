@@ -25,4 +25,9 @@
 		<br style="clear:both" />
 	</div>
 
+	<div>
+		
+		<?php pr($bloxpress); ?>
+ </div>
+
 <?php get_footer(); ?>
