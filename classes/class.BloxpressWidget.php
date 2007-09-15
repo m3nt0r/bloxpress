@@ -18,6 +18,11 @@ class BloxpressWidget {
 	var $setup;
 	var $html;
 	
+	var $widget_id = 'widget';
+	var $widget_class = 'widget';
+	var $widget_params = array();
+	var $widget_callback = null;
+	
 	function BloxpressWidget($name, $setup=null) {
 		global $bloxpress;
 		
@@ -27,37 +32,72 @@ class BloxpressWidget {
 		$this->loadWidget();
 	}
 	
-	function loadWidget() {
+	function initWidget() {
 		global $bloxpress;
 		
-		if(!in_array($this->name, array_keys($bloxpress->widgets))) {
-			$this->html = "{$this->name} is not registered!";
+		if(in_array($this->name, array_keys($bloxpress->widgets)))
+		{
+			$this->widget_id = $this->_randomId($this->name);
+			$this->widget_class = $bloxpress->widgets[$this->name]['classname'];
+			$this->widget_params = $bloxpress->widgets[$this->name]['params'];
+			$this->widget_callback = $bloxpress->widgets[$this->name]['callback'];
+			
+			$this->fillSetup();
+			return true;
 		}
 		else {
-			$widget_id = $bloxpress->attachRandomId($this->name);
-			$widget_class = $bloxpress->widgets[$this->name]['classname'];
-			$widget_params = $bloxpress->widgets[$this->name]['params'];
-			$widget_callback = $bloxpress->widgets[$this->name]['callback'];
-			
-			// merge and update parameters
-			$params = array_merge(array($this->setup), (array) $widget_params);
-			$params[0]['before_widget'] = sprintf($params[0]['before_widget'], $widget_id, $widget_class);
-			
-			ob_start();
-			if(is_callable($widget_callback)) {
-				call_user_func_array($widget_callback, $params);
-				$this->html = ob_get_contents();
-			} else {
-				$this->html = "{$widget_callback} is not callable!";
-			}
-			ob_clean();
+			$this->_error('The "'.ucfirst($this->name).'" widget is not available.');
+			return false;
 		}
 	}
 	
 	function getWidgetHTML() {
 		return $this->html;	
-	}
+	}	
+	
 
+	function callWidget() {
+		
+		if(is_callable($this->widget_callback)) {
+			ob_start();
+			call_user_func_array($this->widget_callback, $this->widget_params);
+			$this->html = ob_get_contents();
+			ob_clean();
+		} else {
+			$this->_error($this->widget_callback.' is not callable.');
+		}
+		
+	}
+	
+	function fillSetup() {
+		$this->widget_params = array_merge(array($this->setup), (array) $this->widget_params);
+		$before_widget = sprintf($this->widget_params[0]['before_widget'], $this->widget_id, $this->widget_class);
+		$this->widget_params[0]['before_widget'] = $before_widget;
+	}
+	
+	
+	function loadWidget()
+	{
+		$this->initWidget();
+		$this->callWidget();
+	}
+	
+
+	function _error($msg){
+		global $bloxpress;
+		
+		$this->widget_id =  $this->_randomId('widget_error');
+		$this->widget_class = 'widget_error';
+		$this->widget_callback = 'bp_widget_error';
+		$this->fillSetup();
+		$this->widget_params[0]['error_message'] = $msg;
+	}
+	
+	
+	function _randomId($id) {
+		global $bloxpress;
+		return $bloxpress->attachRandomId($id);
+	}
 }
 
 ?>

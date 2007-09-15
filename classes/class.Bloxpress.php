@@ -21,6 +21,14 @@ class Bloxpress {
 	var $setup;
 	
 	function Bloxpress() {
+		
+		$this->setup = array(
+			'before_widget' => '<li id="block_%1$s" class="block %2$s"><div class="yui-panel yui-dialog shadow">',
+			'before_title' => '<div class="hd block_handle">',
+			'after_title' => '</div><div class="bd">',
+			'after_widget' => '</div><div class="container-close"></div></div></li>'
+		);
+		
 		$this->registerSidebars();
 		$this->loadLayout();
 		$this->loadWidgets();
@@ -31,8 +39,8 @@ class Bloxpress {
 	function getSidebars() {
 		$sidebars = array();
 		if($this->layout) {
-			foreach($this->columns as $sidebarId) {
-				$sidebars[$sidebarId] = new BloxpressSidebar($this->layout[$sidebarId], $this->sidebars[$sidebarId]);
+			foreach($this->columns as $sidebar_id) {
+				$sidebars[$sidebar_id] = new BloxpressSidebar($this->layout[$sidebar_id], $this->sidebars[$sidebar_id]);
 			}
 		}
 		return $sidebars;
@@ -40,15 +48,6 @@ class Bloxpress {
 	
 	function registerSidebars() {
 		global $wp_registered_sidebars;
-		
-			
-		$this->setup = array(
-			'before_widget' => '<li id="block_%1$s" class="block %2$s"><div class="yui-panel yui-dialog shadow">',
-			'before_title' => '<div class="hd block_handle">',
-			'after_title' => '</div><div class="bd">',
-			'after_widget' => '</div><div class="container-close"></div></div></li>'
-		);
-		
 		$sidebarNames = array("Left Side", "Center", "Right Side");
 		foreach ($sidebarNames as $i => $sidebarName){
 			$this->columns[$i] = "sidebar-".($i+1);

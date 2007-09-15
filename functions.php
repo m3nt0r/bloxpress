@@ -44,7 +44,7 @@ $sidebars = $bloxpress->getSidebars();
 // Template Function
 // =========================================================================
 function renderSidebar($num){
-	global $sidebars, $bloxpress;
+	global $sidebars, $bloxpress, $wp_query;
 
 	$array_num = $num - 1;
 	$sidebar_id = 'sidebar-'.$num;
@@ -83,10 +83,13 @@ if($_GET['bloxpress'])
 	
 	if($_GET['bloxpress']=='blocklist')
 	{
+		$widgets = $bloxpress->widgets;
+		unset($widgets['error']);
+		
 		require_once(BP_CLASSDIR . DS . 'class.Services_JSON.php');
 		header('Content-type: application/json');
 		$json = new Services_JSON();
-		echo $json->encode($bloxpress->widgets); 
+		echo $json->encode($widgets); 
 	}
 	
 	exit(); // always end, if ajax.

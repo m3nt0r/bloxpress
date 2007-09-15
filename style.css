@@ -130,6 +130,9 @@ of the whole page*/
   blockmenu
 */
 #blockmenu {
+	padding: 5px;
+}
+#blockmenu div.yui-panel {
 	width: 170px !important;	
 }
 #blockmenu ul { /* some styles affecting lists (.sortable is also a list) */
