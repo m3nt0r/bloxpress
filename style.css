@@ -12,6 +12,7 @@ body {
 	color: #444;
 	background: #fff;
 	font-size: 77%;
+	
 }
 
 /* -----------------------
@@ -91,7 +92,6 @@ of the whole page*/
   page, date, author, single,.. */
 #main {
 	text-align: left;
-	line-height: 1.2em;
 }
 
 /* footer.. says it all */
