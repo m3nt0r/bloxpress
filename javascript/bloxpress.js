@@ -15,7 +15,7 @@
  * Bloxpress Global Variables
  * -------------------------------------------
  */
-var imageDir = 'wp-content/themes/bloxpress3/images'; 
+var imageDir = 'wp-content/themes/bloxpress/images'; 
 
 // Menu / Notify Target
 var targetElementID = '#main' // blockmenu and other things will be temporarly attached to this element

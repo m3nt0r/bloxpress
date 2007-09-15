@@ -19,7 +19,7 @@ define( 'BP_VERSION', '1.6' );
 if (!defined('DS')){define('DS', DIRECTORY_SEPARATOR);}
 
 define( 'BP_BASEDIR', TEMPLATEPATH );
-define( 'BP_URLPATH', '/wp-content/themes/bloxpress3');
+define( 'BP_URLPATH', '/wp-content/themes/bloxpress');
 define( 'BP_BASEURL', get_option('home') );
 define( 'BP_THEMEURL', BP_BASEURL.BP_URLPATH );
 define( 'BP_LIBDIR', BP_BASEDIR . DS . 'libraries' );
