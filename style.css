@@ -7,12 +7,12 @@ Author URI: http://www.m3nt0r.de
 Created: 27.02.2007
 Version: 1.6
 */
-
+html { height: 100%; margin-bottom: 1px; } /* force scrollbar in firefox*/
+										     
 body {
 	color: #444;
 	background: #fff;
 	font-size: 77%;
-	
 }
 
 /* -----------------------
@@ -35,14 +35,16 @@ a {
 	text-decoration: none;
 	color: #aa1100;
 }
-
 a:hover {
 	color: #ff1100;	
 }
-
+a:active {
+	outline: none;
+}
 a img {
 	border: none;
 }
+
 
 /* -----------------------
   lists
@@ -250,3 +252,22 @@ example: .wp_widget_categories .block_content { background: #efa }
 	position: fixed;
 }
 
+h2.sub {
+	padding:10px 4px 10px 4px;
+	margin-bottom: 10px;
+	background: #ccc	
+}
+
+div.container-minmax {
+	height:15px;
+	position:absolute;
+	right:32px;
+	top:5px;
+	width:15px;
+}
+div.maxImage {
+background:transparent url(http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/sprite.png) no-repeat scroll 0pt -350px;	
+}
+div.minImage {
+background:transparent url(http://yui.yahooapis.com/2.3.0/build/assets/skins/sam/sprite.png) no-repeat scroll 0pt -400px;	
+}

@@ -38,10 +38,6 @@ var cursorImageOpen = imageDir+'/cursor_openhand.cur'; // IE replacement for cur
 var cursorImageClosed = imageDir+'/cursor_closedhand.cur'; // IE replacement for cursorGrab
 
 // Icons and Images
-var imageClose = baseUrl+'/'+imageDir+'/icon_close.gif';
-var imageMinimize = baseUrl+'/'+imageDir+'/icon_minimize.gif';
-var imageMaximize = baseUrl+'/'+imageDir+'/icon_maximize.gif';
-
 function e(output) {
 	if($.browser.mozilla) { console.log(output); }
 }
@@ -73,29 +69,8 @@ var Bloxpress = {
 		cursorNormal = this.grabCursor;
 		cursorGrab = this.grabbingCursor;	
 	},
-	getRandom: function(element_id) {
-		return element_id + '_' + Math.round(Math.random() * 10000);
-	}
-};
-
-/**
- * Bloxpress DragDrop Component
- * ------------------------
- * Defines a droppable Area and handles onDrop requests made by Menu-Items
- */
-Bloxpress.DragDrop = $.extend({
-	removeStack: [],
-	init: function() {
-		this.setCursors();
-		this.addEvents();
-		this.makeSort();
-		this.makeDrop();
-	},
-	addEvents: function()
-	{
-		$('.button-addwidgets').bind('click', function(){ Bloxpress.Menu.init(); });
-		$('.container-close').css({cursor:'pointer'}).click(function(evt){ this.removeBlock($(evt.target).parent().parent()); }.bind(this));
-		$('.block_handle').css({cursor: cursorNormal}).bind("mousedown", function(){
+	bindCursors: function(selector) {
+		$(selector).css({cursor: cursorNormal}).bind("mousedown", function(){
 			$(this).css({cursor: cursorGrab});
 		}).bind("mouseup", function(){			
 			$(this).css({cursor: cursorNormal});
@@ -103,12 +78,53 @@ Bloxpress.DragDrop = $.extend({
 			$(this).css({cursor: cursorNormal});
 		});
 	},
+	getRandom: function(element_id) {
+		return element_id + '_' + Math.round(Math.random() * 10000);
+	},
+	updateCookie: function() {
+		serial = $.SortSerialize();
+		cookie = Bloxpress.Cookie.init('bloxpress', serial.hash);
+		cookie.update();
+	}
+};
+
+/**
+ * Bloxpress Block Actions
+ * ------------------------
+ * Min/Max and Remove
+ */
+Bloxpress.BlockActions = $.extend({
+	removeStack: [],
+	init: function() {
+		this.setCursors();
+		this.addEvents();	
+	},
+	addEvents: function()
+	{
+		this.bindCursors('div.block_handle');
+		
+		$('.container-close').bind('click',
+										function(evt){
+												this.removeBlock($(evt.target).parent().parent());
+										}.bind(this)
+									);
+		
+		$('.container-minmax').toggle(
+									function(){
+										$(this).parent().children('div.bd').slideUp('fast')
+										$(this).removeClass('maxImage').addClass('minImage');
+									},
+									function(){
+										$(this).parent().children('div.bd').slideDown('fast')
+										$(this).removeClass('minImage').addClass('maxImage');
+									}
+								);
+	},
 	isInStack: function(id) {
-		return $.grep(this.removeStack, function(n){ if(n==id){return true;} }).length;
+		return $.grep(this.removeStack,function(n){ if(n==id){return true;} }).length;
 	},
 	removeFromStack: function(id) {
-		var _removeStack = this.removeStack;
-		$.grep(_removeStack, function(n,i){ if(n==id){ _removeStack.splice(i,1); } });
+		var _removeStack = this.removeStack; $.grep(_removeStack, function(n,i){ if(n==id){ _removeStack.splice(i,1); } });
 	},
 	removeBlock: function(block)
 	{
@@ -120,7 +136,7 @@ Bloxpress.DragDrop = $.extend({
 			var timeoutID = this.getRandom('timeout');
 			var timeoutNo = window.setTimeout(function(){ clearInterval(interval); $(block).remove(); this.removeFromStack(blockID); this.updateCookie() }.bind(this), 5000);
 			var abortLink = $.A({href:'#stopRemoval'}, 'Abort');
-			var removalAbort = $(abortLink).click(function(){ clearTimeout(timeoutNo); this.removeFromStack(blockID); $(block).children('.removeNotice').remove(); }.bind(this));
+			var removalAbort = $(abortLink).click(function(){ clearTimeout(timeoutNo); this.removeFromStack(blockID); $('#'+blockID+' div.ft').remove(); }.bind(this));
 			var removal = $.DIV({className:'ft'}, 'Remove? closing in ', $.SPAN({id:timeoutID}, '5'), ' ', removalAbort[0]);
 			$('#'+blockID+' div:first').append(removal);
 			
@@ -131,19 +147,21 @@ Bloxpress.DragDrop = $.extend({
 			
 			return true;
 		}
-	},
-	spawnBlock: function(zone, item)
-	{
-		var block = item.id.split('_')[1];
-		var blockName = item.innerHTML;
-		var blockId = this.getRandom(block);
-		var blockElement = null;
-		$.get(this.baseUrl+'/?bloxpress=block&load='+block, function(blockContent) // load the content
-		{
-			$('#'+zone+' ul.sortable').append(blockContent).SortableAddItem($('#'+zone+' li.block:last').get(0));
-			this.addEvents();
-			this.updateCookie();
-		}.bind(this));
+	}
+}, Bloxpress);
+
+
+/**
+ * Bloxpress DragDrop Component
+ * ------------------------
+ * Defines a droppable Area and handles onDrop requests made by Menu-Items
+ */
+Bloxpress.DragDrop = $.extend({
+	init: function() {
+		this.makeSort();
+		this.makeDrop();
+		Bloxpress.BlockActions.init();
+		$('.button-addwidgets').bind('click', function(){ Bloxpress.Menu.init(); });
 	},
 	makeDrop: function() {
 		var _self = this;
@@ -182,28 +200,19 @@ Bloxpress.DragDrop = $.extend({
 			}
 		);
 	},
-	updateCookie: function() {
-		serial = $.SortSerialize();
-		cookie = Bloxpress.Cookie.init('bloxpress', serial.hash);
-		cookie.update();
-	},
-	minimize: function(image, content) {
-		image.src = imageMaximize;
-		$(content).hide();
-	},
-	maximize: function(image, content) {
-		image.src = imageMinimize;
-		$(content).show();
-	},
-	toggleMinMax: function(image, content)
+	spawnBlock: function(zone, item)
 	{
-		if(image.src == imageMinimize) {
-			this.minimize(image, content);
-		} else {
-			this.maximize(image, content);
-		}
+		var block = item.id.split('_')[1];
+		var blockName = item.innerHTML;
+		var blockId = this.getRandom(block);
+		var blockElement = null;
+		$.get(this.baseUrl+'/?bloxpress=block&load='+block, function(blockContent) // load the content
+		{
+			$('#'+zone+' ul.sortable').append(blockContent).SortableAddItem($('#'+zone+' li.block:last').get(0));
+			this.addEvents();
+			this.updateCookie();
+		}.bind(this));
 	}
-	
 }, Bloxpress);
 
 /**
@@ -240,16 +249,9 @@ Bloxpress.Menu = $.extend({
 		this.targetElement.append(blockmenu);
 		
 		// Start of with a animation and make the whole Div draggable
-		$('#blockmenu').BlindDown(400).Draggable({zIndex: 900, handle: '#blockmenu_handle'});
-		$('#blockmenu div.container-close').bind("click", function() { $('#blockmenu').remove(); });
-		
-		$('#blockmenu_handle').css({cursor: cursorNormal}).bind("mousedown", function(){
-			$(this).css({cursor: cursorGrab});
-		}).bind("mouseup", function(){			
-			$(this).css({cursor: cursorNormal});
-		}).bind("mouseout", function(){			
-			$(this).css({cursor: cursorNormal});
-		});
+		$('div#blockmenu').BlindDown(400).Draggable({zIndex: 900, handle: 'div#blockmenu_handle'});
+		$('div#blockmenu div.container-close').bind("click", function() { $('div#blockmenu').remove(); });
+		this.bindCursors('div#blockmenu_handle');
 		
 		// Make all Listitems draggable and add the event handles for the mouse cursor
 		$('.blockitem').css({cursor: cursorNormal}).bind("mousedown", function(){

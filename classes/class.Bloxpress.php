@@ -25,8 +25,8 @@ class Bloxpress {
 		$this->setup = array(
 			'before_widget' => '<li id="block_%1$s" class="block %2$s"><div class="yui-panel yui-dialog shadow">',
 			'before_title' => '<div class="hd block_handle">',
-			'after_title' => '</div><div class="bd">',
-			'after_widget' => '</div><div class="container-close"></div></div></li>'
+			'after_title' => '</div><div class="bd block_content">',
+			'after_widget' => '</div><div class="container-close"></div><div class="container-minmax maxImage"></div></div></li>'
 		);
 		
 		$this->registerSidebars();
