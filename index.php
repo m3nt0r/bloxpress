@@ -25,9 +25,11 @@
 		<br style="clear:both" />
 	</div>
 
-	<div id="debug">		
+	<!-- dev only -->
+	<p><a href="#" onclick="$('#debug').toggle();return false;">debug</a></p>
+	<div id="debug" style="display:none">		
 		<?php pr($bloxpress); ?>
-		<?php pr($wp_query); ?>
 	</div>
+	<!-- /dev only -->
 
 <?php get_footer(); ?>

@@ -41,16 +41,20 @@ function bp_widget_search($args) {
 }
 
 
-
 // Posts Widget - Wordpress Loop
 // =========================================================================
 function bp_widget_posts($args) {
+		global $wp;
 		extract($args);
-				
+		do_action('init');
+		$wp->parse_request();
+		$wp->build_query_string();
+		$wordpress = new WP_Query($wp->query_string);
+		
 		echo $before_widget;
 		echo $before_title . __('Posts') . $after_title;
 		
-			include(BP_BASEDIR.DS.'posts.php');
+		include(BP_BASEDIR.DS.'posts.php');
 		
 		echo $after_widget;
 }
@@ -66,6 +70,6 @@ function bp_widget_posts($args) {
 	wp_register_sidebar_widget('search', __('Search'), 'bp_widget_search', array('classname' => 'widget_search'));
 
 	// posts
-	wp_register_sidebar_widget('posts', __('Posts'), 'bp_wiget_posts', array('classname' => 'widget_posts'));
+	wp_register_sidebar_widget('posts', __('Posts'), 'bp_widget_posts', array('classname' => 'widget_posts'));
 
 ?>
