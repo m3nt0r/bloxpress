@@ -52,8 +52,7 @@ var Bloxpress = {
 	appendTarget: targetElementID,
 	grabCursor: cursorNormal,
 	grabbingCursor: cursorGrab,
-	setCursors: function()
-	{
+	setCursors: function() {
 		if( $.browser.opera || $.browser.safari ) {
 			this.grabCursor = "move";
 			this.grabbingCursor = "move";
@@ -97,19 +96,19 @@ Bloxpress.BlockActions = $.extend({
 	removeStack: [],
 	init: function() {
 		this.setCursors();
-		this.addEvents();	
+		this.addEvents($('body').get(0));	
 	},
-	addEvents: function()
+	addEvents: function(scope)
 	{
 		this.bindCursors('div.block_handle');
 		
-		$('.container-close').bind('click',
+		$('.container-close', scope).bind('click',
 										function(evt){
-												this.removeBlock($(evt.target).parent().parent());
+											this.removeBlock($(evt.target).parent().parent());
 										}.bind(this)
 									);
 		
-		$('.container-minmax').toggle(
+		$('.container-minmax', scope).toggle(
 									function(){
 										$(this).parent().children('div.bd').slideUp('fast')
 										$(this).removeClass('maxImage').addClass('minImage');
@@ -209,7 +208,7 @@ Bloxpress.DragDrop = $.extend({
 		$.get(this.baseUrl+'/?bloxpress=block&load='+block, function(blockContent) // load the content
 		{
 			$('#'+zone+' ul.sortable').append(blockContent).SortableAddItem($('#'+zone+' li.block:last').get(0));
-			this.addEvents();
+			Bloxpress.BlockActions.addEvents($('#'+zone+' li.block:last').get(0));
 			this.updateCookie();
 		}.bind(this));
 	}
