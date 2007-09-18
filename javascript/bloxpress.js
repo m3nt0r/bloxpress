@@ -15,7 +15,6 @@
  * Bloxpress Global Variables
  * -------------------------------------------
  */
-var imageDir = 'wp-content/themes/bloxpress/images'; 
 
 // Menu / Notify Target
 var targetElementID = '#main'; // blockmenu and other things will be temporarly attached to this element
@@ -34,13 +33,8 @@ var updateMessageRight = '0px';
 // Cursor
 var cursorGrab = 'move'; // default cursor, if a draggable is moved
 var cursorNormal = 'pointer'; // default for draggable element
-var cursorImageOpen = imageDir+'/cursor_openhand.cur'; // IE replacement for cursorNormal
-var cursorImageClosed = imageDir+'/cursor_closedhand.cur'; // IE replacement for cursorGrab
-
-// Debug
-function e(output) {
-	if($.browser.mozilla) { console.log(output); }
-}
+var cursorImageOpen ='wp-content/themes/bloxpress/images/cursor_openhand.cur'; // IE replacement for cursorNormal
+var cursorImageClosed = 'wp-content/themes/bloxpress/images/cursor_closedhand.cur'; // IE replacement for cursorGrab
 
 /**
  * Bloxpress Base Object
@@ -69,21 +63,22 @@ var Bloxpress = {
 		cursorGrab = this.grabbingCursor;	
 	},
 	bindCursors: function(selector) {
-		this.setCursors();
-		$(selector).css({cursor: cursorNormal}).bind("mousedown", function(){
-			$(this).css({cursor: cursorGrab});
-		}).bind("mouseup", function(){			
-			$(this).css({cursor: cursorNormal});
+		var _self = this;
+		_self.setCursors();
+		return $(selector).css({cursor: _self.grabCursor}).bind("mousedown", function(){
+			this.style.cursor = _self.grabbingCursor;
+		}).bind("mouseup", function(){	
+			this.style.cursor = _self.grabCursor;
 		}).bind("mouseout", function(){			
-			$(this).css({cursor: cursorNormal});
+			this.style.cursor = _self.grabCursor;
 		});
 	},
 	getRandom: function(element_id) {
 		return element_id + '_' + Math.round(Math.random() * 10000);
 	},
 	updateCookie: function() {
-		serial = $.SortSerialize();
-		cookie = Bloxpress.Cookie.init('bloxpress', serial.hash);
+		var serial = $.SortSerialize();
+		var cookie = Bloxpress.Cookie.init('bloxpress', serial.hash);
 		cookie.update();
 	}
 };
@@ -125,23 +120,35 @@ Bloxpress.BlockActions = $.extend({
 	},	
 	removeBlock: function(block)
 	{
-		var blockID = block.attr('id');
-		if(this.isInStack(blockID)) {
+		var _self = this;
+		var blockID = $(block).attr('id');
+		var timeoutID = _self.getRandom('timeout');
+		var interval, timeout, removalAbort, removalElement;
+		
+		if(_self.isInStack(blockID)) {
 			return false;	
-		} else {
-			this.removeStack.push(blockID);
-			var timeoutID = this.getRandom('timeout');
-			var timeoutNo = window.setTimeout(function(){ clearInterval(interval); $(block).remove(); this.removeFromStack(blockID); this.updateCookie(); }.bind(this), 5000);
-			var abortLink = $.A({href:'#stopRemoval'}, 'Abort');
-			var removalAbort = $(abortLink).click(function(){ clearTimeout(timeoutNo); this.removeFromStack(blockID); }.bind(this));
-			var removal = $.DIV({className:'ft'}, 'Remove? closing in ', $.SPAN({id:timeoutID}, '5'), ' ', removalAbort[0]);
-			$('#'+blockID+' div:first').append(removal);
+		} 
+		else {
+			_self.removeStack.push(blockID);
 			
-			var interval = window.setInterval(function() {
-				seconds = parseInt($('#'+timeoutID).html(), 10); seconds--;
-				$('#'+timeoutID).html( seconds ); 
+			interval = window.setInterval(function() {
+				var seconds, timeoutElement = $('#'+timeoutID);
+				if(timeoutElement.length) {
+					timeoutElement.html( parseInt(timeoutElement.html(), 10) - 1 );
+				} 
 			}, 1000);
 			
+			timeout = window.setTimeout(function(){
+				clearInterval(interval); 
+				_self.removeFromStack(blockID); 
+				$('#'+blockID).remove();
+				_self.updateCookie(); 
+			}, 5000);
+			
+			removalAbort = $($.A({href:'#stopRemoval'}, 'Abort')).click(function(){ clearTimeout(timeout); _self.removeFromStack(blockID); }).get(0);
+			removalElement = $.DIV({className:'ft'}, 'Remove? closing in ', $.SPAN({id:timeoutID}, '5'), ' ', removalAbort);
+			
+			$('#'+blockID+' div:first').append(removalElement);
 			return true;
 		}
 	},
@@ -238,8 +245,7 @@ Bloxpress.Menu = $.extend({
 		// Create the unordered list
 		var blocklist = $.UL({id:'blockmenu_list'});
 		$.each(serverBlocks, function(i, block) {
-			listitem = $.LI({className:'blockitem', message: block.name, id:'blockitem_'+block.id}, block.name);
-			blocklist.appendChild( listitem );
+			blocklist.appendChild( $.LI({className:'blockitem', message: block.name, id:'blockitem_'+block.id}, block.name) );
 		});	
 		
 		// Wrap a DIV around the list and add a heading to it.		
@@ -259,18 +265,13 @@ Bloxpress.Menu = $.extend({
 		$('div#blockmenu div.container-close').bind("click", function() { $('div#blockmenu').remove(); });
 		this.bindCursors('div#blockmenu_handle');
 		
-		// Make all Listitems draggable and add the event handles for the mouse cursor
-		$('.blockitem').css({cursor: cursorNormal}).bind("mousedown", function(){
-			$(this).css({cursor: cursorGrab});
-			$(this).fadeTo("fast", 0.5);
-		}).bind("mouseup", function(){			
-			$(this).css({cursor: cursorNormal});
-			$(this).fadeTo("fast", 1);
-		}).Draggable({zIndex: 1000, ghosting: true, revert: true,
+		// Make all Listitems draggable
+		this.bindCursors('.blockitem').Draggable({
+			zIndex: 1000, ghosting: true, revert: true, frameClass: 'blockitem_frame',
 			onStop:function(){				
 				$(this).fadeTo("fast", 1);
 				$(this).css({cursor: cursorNormal});
-			}, frameClass: 'blockitem_frame'
+			} 
 		});
 	}	
 }, Bloxpress);
@@ -316,19 +317,24 @@ Bloxpress.Cookie = $.extend({
 	},
 	update: function()
 	{
+		var _self = this;
 		this.remove(); this.set();		
 		if (this.cookieVerbose)
 		{
 			if (this.createNotifier('cookieNote', 'cookienotice', updateMessage))
 			{
 				$('#cookieNote').show();
-				setTimeout("$('#cookieNote').remove()", updateMessageTime); // remove it
+				setTimeout(_self.removeNotifier, updateMessageTime); // remove it
 			}
 		}
 	},
+	removeNotifier: function() 
+	{
+		$('#cookieNote').remove();
+	},
 	createNotifier: function(elementID, elementClass, elementContent)
 	{
-		if (document.getElementById(elementID) == null) // dont duplicate
+		if (document.getElementById(elementID) === null) // dont duplicate
 		{
 			var notify = $.DIV({id:elementID,className:elementClass}, elementContent);		
 			$(notify).css({display:'none', zIndex: '1100', top: updateMessageTop, right: updateMessageRight});			
@@ -350,6 +356,7 @@ Function.prototype.bind = function( object ) {
 
 // Document Ready
 $(function(){	
+	$('div.block_handle').unbind();
 	$('.button-addwidgets').bind('click', function(){ 
 		Bloxpress.Menu.init(); 
 	});

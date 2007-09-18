@@ -19,7 +19,7 @@
 		<script type="text/javascript">var baseUrl = '<?php echo get_option('home'); ?>';</script>
 		<script type="text/javascript" id="jquery_1_1_4" src="<?php bloginfo('template_directory'); ?>/javascript/jquery-1.1.4.pack.js"></script>
 		<script type="text/javascript" id="jquery_domext" src="<?php bloginfo('template_directory'); ?>/javascript/jquery-dom.js"></script>
-		<script type="text/javascript" id="interface_1_2" src="<?php bloginfo('template_directory'); ?>/javascript/interface.js"></script>
+		<script type="text/javascript" id="interface_1_2_dd" src="<?php bloginfo('template_directory'); ?>/javascript/interface.js"></script>
 		<script type="text/javascript" id="bloxpress_1_6" src="<?php bloginfo('template_directory'); ?>/javascript/bloxpress.js"></script>
 		
 		<?php wp_head(); ?> 
