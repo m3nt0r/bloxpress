@@ -18,7 +18,7 @@
 var imageDir = 'wp-content/themes/bloxpress/images'; 
 
 // Menu / Notify Target
-var targetElementID = '#main' // blockmenu and other things will be temporarly attached to this element
+var targetElementID = '#main'; // blockmenu and other things will be temporarly attached to this element
 var blockmenuCaption = 'Widget Menu';
 
 // Cookie
@@ -27,7 +27,7 @@ var cookieLifetime = 7; // how many days the cookie should be stored?
 
 // Cookie Update Message
 var updateMessage = 'Layout saved!';
-var updateMessageTime = 500 // Time in miliseconds the message is visible
+var updateMessageTime = 500; // Time in miliseconds the message is visible
 var updateMessageTop = '0px'; // position of the message 
 var updateMessageRight = '0px';
 
@@ -37,7 +37,7 @@ var cursorNormal = 'pointer'; // default for draggable element
 var cursorImageOpen = imageDir+'/cursor_openhand.cur'; // IE replacement for cursorNormal
 var cursorImageClosed = imageDir+'/cursor_closedhand.cur'; // IE replacement for cursorGrab
 
-// Icons and Images
+// Debug
 function e(output) {
 	if($.browser.mozilla) { console.log(output); }
 }
@@ -69,6 +69,7 @@ var Bloxpress = {
 		cursorGrab = this.grabbingCursor;	
 	},
 	bindCursors: function(selector) {
+		this.setCursors();
 		$(selector).css({cursor: cursorNormal}).bind("mousedown", function(){
 			$(this).css({cursor: cursorGrab});
 		}).bind("mouseup", function(){			
@@ -95,36 +96,33 @@ var Bloxpress = {
 Bloxpress.BlockActions = $.extend({
 	removeStack: [],
 	init: function() {
-		this.setCursors();
 		this.addEvents($('body').get(0));	
 	},
 	addEvents: function(scope)
-	{
+	{		
 		this.bindCursors('div.block_handle');
-		
+		this.bindClose(scope);
+		this.bindMinMax(scope);
+	},
+	bindClose: function(scope) {
 		$('.container-close', scope).bind('click',
-										function(evt){
-											this.removeBlock($(evt.target).parent().parent());
-										}.bind(this)
-									);
-		
+			function(evt){
+				this.removeBlock($(evt.target).parent().parent());
+			}.bind(this)
+		);
+	},
+	bindMinMax: function(scope) {
 		$('.container-minmax', scope).toggle(
-									function(){
-										$(this).parent().children('div.bd').slideUp('fast')
-										$(this).removeClass('maxImage').addClass('minImage');
-									},
-									function(){
-										$(this).parent().children('div.bd').slideDown('fast')
-										$(this).removeClass('minImage').addClass('maxImage');
-									}
-								);
-	},
-	isInStack: function(id) {
-		return $.grep(this.removeStack,function(n){ if(n==id){return true;} }).length;
-	},
-	removeFromStack: function(id) {
-		var _removeStack = this.removeStack; $.grep(_removeStack, function(n,i){ if(n==id){ _removeStack.splice(i,1); } });
-	},
+			function(){
+				$(this).parent().children('div.bd').slideUp('fast');
+				$(this).removeClass('maxImage').addClass('minImage');
+			},
+			function(){
+				$(this).parent().children('div.bd').slideDown('fast');
+				$(this).removeClass('minImage').addClass('maxImage');
+			}
+		);
+	},	
 	removeBlock: function(block)
 	{
 		var blockID = block.attr('id');
@@ -133,19 +131,26 @@ Bloxpress.BlockActions = $.extend({
 		} else {
 			this.removeStack.push(blockID);
 			var timeoutID = this.getRandom('timeout');
-			var timeoutNo = window.setTimeout(function(){ clearInterval(interval); $(block).remove(); this.removeFromStack(blockID); this.updateCookie() }.bind(this), 5000);
+			var timeoutNo = window.setTimeout(function(){ clearInterval(interval); $(block).remove(); this.removeFromStack(blockID); this.updateCookie(); }.bind(this), 5000);
 			var abortLink = $.A({href:'#stopRemoval'}, 'Abort');
-			var removalAbort = $(abortLink).click(function(){ clearTimeout(timeoutNo); this.removeFromStack(blockID); $('#'+blockID+' div.ft').remove(); }.bind(this));
+			var removalAbort = $(abortLink).click(function(){ clearTimeout(timeoutNo); this.removeFromStack(blockID); }.bind(this));
 			var removal = $.DIV({className:'ft'}, 'Remove? closing in ', $.SPAN({id:timeoutID}, '5'), ' ', removalAbort[0]);
 			$('#'+blockID+' div:first').append(removal);
 			
 			var interval = window.setInterval(function() {
-				seconds = parseInt($('#'+timeoutID).html()); seconds--;
+				seconds = parseInt($('#'+timeoutID).html(), 10); seconds--;
 				$('#'+timeoutID).html( seconds ); 
 			}, 1000);
 			
 			return true;
 		}
+	},
+	isInStack: function(id) {
+		return $.grep(this.removeStack,function(n){ if(n==id){return true;} }).length;
+	},
+	removeFromStack: function(id) {
+		$('#'+id+' div.ft').remove(); 
+		var _removeStack = this.removeStack; $.grep(_removeStack, function(n,i){ if(n==id){ _removeStack.splice(i,1); } });
 	}
 }, Bloxpress);
 
@@ -156,13 +161,15 @@ Bloxpress.BlockActions = $.extend({
  * Defines a droppable Area and handles onDrop requests made by Menu-Items
  */
 Bloxpress.DragDrop = $.extend({
-	init: function() {
+	init: function() 
+	{
+		Bloxpress.BlockActions.init();
+		
 		this.makeSort();
 		this.makeDrop();
-		Bloxpress.BlockActions.init();
-		$('.button-addwidgets').bind('click', function(){ Bloxpress.Menu.init(); });
 	},
-	makeDrop: function() {
+	makeDrop: function() 
+	{
 		var _self = this;
 		$('.dropspot').Droppable(
 			{
@@ -175,7 +182,8 @@ Bloxpress.DragDrop = $.extend({
 			}
 		);
 	},
-	makeSort: function() {
+	makeSort: function()
+	{
 		var _self = this;
 		$('.sortable').Sortable(
 			{
@@ -222,9 +230,8 @@ Bloxpress.DragDrop = $.extend({
 Bloxpress.Menu = $.extend({
 	init: function()
 	{
-		this.setCursors(); // detect browser / set cursors
 		this.targetElement = $(this.appendTarget); // get the area we want to append on
-		$.getJSON(this.baseUrl+'/?bloxpress=blocklist', function(response){ this.buildMenu(response) }.bind(this) ); // request json list.		
+		$.getJSON(this.baseUrl+'/?bloxpress=blocklist', function(response){ this.buildMenu(response); }.bind(this) ); // request json list.		
 	},
 	buildMenu: function(serverBlocks)
 	{
@@ -234,7 +241,7 @@ Bloxpress.Menu = $.extend({
 			listitem = $.LI({className:'blockitem', message: block.name, id:'blockitem_'+block.id}, block.name);
 			blocklist.appendChild( listitem );
 		});	
-
+		
 		// Wrap a DIV around the list and add a heading to it.		
 		var blockmenu = $.DIV({id:'blockmenu'}, 
 							$.DIV({className:'yui-panel yui-dialog'},
@@ -277,7 +284,7 @@ Bloxpress.Cookie = $.extend({
 	init: function(cookieName, cookieValue)
 	{
 		this.cookieName = cookieName;
-		this.cookieValue = cookieValue
+		this.cookieValue = cookieValue;
 		this.cookieVerbose = cookieVerbose;
 		this.cookieLife = cookieLifetime;
 		return this;
@@ -343,5 +350,8 @@ Function.prototype.bind = function( object ) {
 
 // Document Ready
 $(function(){	
+	$('.button-addwidgets').bind('click', function(){ 
+		Bloxpress.Menu.init(); 
+	});
 	Bloxpress.DragDrop.init();
 });

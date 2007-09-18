@@ -1,10 +1,6 @@
 
-		<?php $wordpress->the_post();  ?>
-		<?php if ($wordpress->is_category) { ?>
-		
-		<h2 class="sub">Archive for the &#8216;<?php single_cat_title(); ?>&#8217; Category</h2>
-		
-		<?php } elseif ($wordpress->is_day) { ?>
+		<?php $wordpress->the_post(); ?>
+		<?php if ($wordpress->is_day) { ?>
 		
 		<h2 class="sub">Archive for <?php the_time('F jS, Y'); ?></h2>
 
@@ -38,7 +34,11 @@
 					<?php the_excerpt() ?>
 				</div>
 				
-				<p class="postmetadata">Posted in <?php the_category(', ') ?> | <?php edit_post_link('Edit', '', ' | '); ?>  <?php comments_popup_link('No Comments &#187;', '1 Comment &#187;', '% Comments &#187;'); ?></p>
+				<p class="postmetadata">
+					Posted in <?php the_category(', ') ?> | 
+					<?php edit_post_link('Edit', '', ' | '); ?>  
+					<?php comments_popup_link('No Comments &#187;', '1 Comment &#187;', '% Comments &#187;'); ?>
+				</p>
 				
 			</div>
 

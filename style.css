@@ -7,8 +7,10 @@ Author URI: http://www.m3nt0r.de
 Created: 27.02.2007
 Version: 1.6
 */
-html { height: 100%; margin-bottom: 1px; } /* force scrollbar in firefox*/
-										     
+html {  /* force scrollbar in firefox*/
+	height: 100%; margin-bottom: 1px; 
+}
+
 body {
 	color: #444;
 	background: #fff;
