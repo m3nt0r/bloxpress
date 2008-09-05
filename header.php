@@ -17,10 +17,12 @@
 		<link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
 
 		<script type="text/javascript">var baseUrl = '<?php echo get_option('home'); ?>';</script>
-		<script type="text/javascript" id="jquery_1_1_4" src="<?php bloginfo('template_directory'); ?>/javascript/jquery-1.1.4.pack.js"></script>
-		<script type="text/javascript" id="jquery_domext" src="<?php bloginfo('template_directory'); ?>/javascript/jquery-dom.js"></script>
-		<script type="text/javascript" id="interface_1_2_dd" src="<?php bloginfo('template_directory'); ?>/javascript/interface.js"></script>
-		<script type="text/javascript" id="bloxpress_1_6" src="<?php bloginfo('template_directory'); ?>/javascript/bloxpress.js"></script>
+		<script id="jquery-1_2_6" src="<?php bloginfo('template_directory'); ?>/javascript/jquery-1.2.6.min.js" type="text/javascript"></script>
+		<script id="jquery-ui-1_5_2_core" src="<?php bloginfo('template_directory'); ?>/javascript/ui/ui.core.min.js" type="text/javascript"></script>
+		<script id="jquery-ui-1_5_2_drag" src="<?php bloginfo('template_directory'); ?>/javascript/ui/ui.draggable.min.js" type="text/javascript"></script>
+		<script id="jquery-ui-1_5_2_drop" src="<?php bloginfo('template_directory'); ?>/javascript/ui/ui.droppable.min.js" type="text/javascript"></script>
+		<script id="jquery-ui-1_5_2_sort" src="<?php bloginfo('template_directory'); ?>/javascript/ui/ui.sortable.min.js" type="text/javascript"></script>
+		<script type="text/javascript" id="bloxpress-1_7" src="<?php bloginfo('template_directory'); ?>/javascript/bloxpress.js"></script>
 		
 		<?php wp_head(); ?> 
 	</head>
