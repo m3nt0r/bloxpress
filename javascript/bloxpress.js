@@ -78,7 +78,6 @@ var Bloxpress = {
 	},
 	updateCookie: function() {
 		var serial = this.sortables.sortable('serialize');
-		console.log(serial);
 		var cookie = Bloxpress.Cookie.init('bloxpress', serial);
 		cookie.update();
 	}
