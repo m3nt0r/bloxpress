@@ -8,7 +8,7 @@
  *  Bloxpress Javascript
  *  
  *  Handling all the interface stuff
- *
+ *  @version 1.7
 */
 
 /**
@@ -77,8 +77,9 @@ var Bloxpress = {
 		return element_id + '_' + Math.round(Math.random() * 10000);
 	},
 	updateCookie: function() {
-		var serial = $.SortSerialize();
-		var cookie = Bloxpress.Cookie.init('bloxpress', serial.hash);
+		var serial = this.sortables.sortable('serialize');
+		console.log(serial);
+		var cookie = Bloxpress.Cookie.init('bloxpress', serial);
 		cookie.update();
 	}
 };
@@ -145,9 +146,8 @@ Bloxpress.BlockActions = $.extend({
 				_self.updateCookie(); 
 			}, 5000);
 			
-			removalAbort = $($.A({href:'#stopRemoval'}, 'Abort')).click(function(){ clearTimeout(timeout); _self.removeFromStack(blockID); }).get(0);
-			removalElement = $.DIV({className:'ft'}, 'Remove? closing in ', $.SPAN({id:timeoutID}, '5'), ' ', removalAbort);
-			
+			removalAbort = $('<a href="#stop">Abort</a>').click(function(){ clearTimeout(timeout); _self.removeFromStack(blockID); }).get(0);
+			removalElement = $('<div class="ft">Remove? closing in <span id="'+timeoutID+'" style="padding-right:0.3em">5</span>').append(removalAbort);
 			$('#'+blockID+' div:first').append(removalElement);
 			return true;
 		}
@@ -171,59 +171,54 @@ Bloxpress.DragDrop = $.extend({
 	init: function() 
 	{
 		Bloxpress.BlockActions.init();
-		
 		this.makeSort();
 		this.makeDrop();
 	},
 	makeDrop: function() 
 	{
 		var _self = this;
-		$('.dropspot').Droppable(
+		this.droppables = $('.dropspot').droppable(
 			{
-				tolerance: 'intersect',
-				accept : 'blockitem',
-				hoverclass: 'dropzonehover',
-				ondrop: function(drag) {				
-					_self.spawnBlock($(this).attr('id'), drag);
-				}
+			//	tolerance: 'intersect',
+				activeClass: 'dropzonehover',
+				accept : function(obj){ return obj.hasClass('blockitem'); },
+				drop: function(evt, ui) { _self.spawnBlock(ui); }
 			}
 		);
 	},
 	makeSort: function()
 	{
 		var _self = this;
-		$('.sortable').Sortable(
+		this.sortables = $('.sortable').sortable(
 			{
+				opacity: 0.7, 
 				accept : 'block',
-				activeclass : 'sortableactive',
-				hoverclass : 'sortablehover',
-				helperclass : 'sorthelper',
-				handle: '.block_handle',
+				activeClass : 'sortableactive',
+				hoverClass : 'sortablehover',
+				helperClass : 'sorthelper',
+				handle: $('.block_handle'),
 				containment: '#layout',
-				onStart: function(block) {
+				start: function(block) {
 					$(block).css({padding:'0 2px 4px 2px'});
 				},
-				onStop: function(){
+				stop: function(){
 					_self.updateCookie();
 				},
-				onchange: function(){
+				change: function(){
 					_self.updateCookie();
 				},
-				opacity: 0.5,
-				fit: true
 			}
 		);
 	},
-	spawnBlock: function(zone, item)
+	spawnBlock: function(ui)
 	{
-		var block = item.id.split('_')[1];
-		var blockName = item.innerHTML;
-		var blockId = this.getRandom(block);
-		var blockElement = null;
-		$.get(this.baseUrl+'/?bloxpress=block&load='+block, function(blockContent) // load the content
-		{
-			$('#'+zone+' ul.sortable').append(blockContent).SortableAddItem($('#'+zone+' li.block:last').get(0));
-			Bloxpress.BlockActions.addEvents($('#'+zone+' li.block:last').get(0));
+		var droppable = $(ui.element).get(0);
+		var draggable = $(ui.draggable).get(0);
+		var dropzone = droppable.id;
+		var blockId = draggable.id.split('_')[1];
+		$.get(this.baseUrl+'/?bloxpress=block&load='+blockId, function(blockContent) { // load the content
+			$('#'+dropzone+' ul.sortable').append(blockContent); // add to sortable
+			Bloxpress.BlockActions.addEvents($('#'+dropzone+' li.block:last').get(0)); // apply events to new block
 			this.updateCookie();
 		}.bind(this));
 	}
@@ -243,32 +238,29 @@ Bloxpress.Menu = $.extend({
 	buildMenu: function(serverBlocks)
 	{
 		// Create the unordered list
-		var blocklist = $.UL({id:'blockmenu_list'});
-		$.each(serverBlocks, function(i, block) {
-			blocklist.appendChild( $.LI({className:'blockitem', message: block.name, id:'blockitem_'+block.id}, block.name) );
-		});	
+		var blocklist = '<ul id ="blockmenu_list">';
+		$.each(serverBlocks, function(i,block){ blocklist+= '<li class="blockitem" id="blockitem_'+block.id+'">'+block.name+'</li>'; });	
+		blocklist+='</ul>';
 		
-		// Wrap a DIV around the list and add a heading to it.		
-		var blockmenu = $.DIV({id:'blockmenu'}, 
-							$.DIV({className:'yui-panel yui-dialog'},
-								$.DIV({className:'hd',id:'blockmenu_handle'}, blockmenuCaption),
-								$.DIV({className:'bd'}, blocklist), $.DIV({className:'container-close'})
-							)
-						);	
+		// Wrap a DIV around the list and add a heading to it.	
+		var blockmenu = $('<div id="blockmenu"><div class="yui-panel yui-dialog"><div id="blockmenu_handle" class="hd">'+blockmenuCaption+'</div><div class="bd">'+blocklist+'</div><div class="container-close" /></div></div>');	
 		$(blockmenu).css({display:'none', position:'absolute', top:'0', left:'0', zIndex:'900'});
 		
 		// Add it to the Page
 		this.targetElement.append(blockmenu);
 		
 		// Start of with a animation and make the whole Div draggable
-		$('div#blockmenu').BlindDown(400).Draggable({zIndex: 900, handle: 'div#blockmenu_handle'});
+		$('div#blockmenu').show(400).draggable({zIndex: 900, handle: $('div#blockmenu_handle')});
 		$('div#blockmenu div.container-close').bind("click", function() { $('div#blockmenu').remove(); });
 		this.bindCursors('div#blockmenu_handle');
 		
 		// Make all Listitems draggable
-		this.bindCursors('.blockitem').Draggable({
-			zIndex: 1000, ghosting: true, revert: true, frameClass: 'blockitem_frame',
-			onStop:function(){				
+		this.bindCursors('.blockitem').draggable({
+			zIndex: 1000, 
+			ghosting: true, 
+			revert: true, 
+			revertDuration: 0.5,
+			stop:function(){				
 				$(this).fadeTo("fast", 1);
 				$(this).css({cursor: cursorNormal});
 			} 
@@ -336,15 +328,16 @@ Bloxpress.Cookie = $.extend({
 	{
 		if (document.getElementById(elementID) === null) // dont duplicate
 		{
-			var notify = $.DIV({id:elementID,className:elementClass}, elementContent);		
+			var notify = $('<div id="'+elementID+'" class="'+elementClass+'">'+ elementContent+'<div>');
 			$(notify).css({display:'none', zIndex: '1100', top: updateMessageTop, right: updateMessageRight});			
 			$(this.appendTarget).append(notify);
-			
 			return true;
 		}
 		return false;
 	}
 }, Bloxpress);
+
+
 
 // good old .bind(); 
 Function.prototype.bind = function( object ) {
